@@ -15,4 +15,5 @@ INSERT INTO towns (townName,regStart) VALUES ('Bellville', 'CY');
 INSERT INTO towns (townName,regStart) VALUES ('Cape Town', 'CA');
 INSERT INTO towns (townName,regStart) VALUES ('Kuilsriver', 'CF');
 INSERT INTO towns (townName,regStart) VALUES ('Paarl', 'CJ');
+INSERT INTO towns (townName,regStart) VALUES ('all', 'all');
 

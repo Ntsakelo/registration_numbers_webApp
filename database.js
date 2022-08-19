@@ -1,5 +1,5 @@
 export default function RegistrationData(db) {
-  let townId = 0;
+  let id = 0;
   async function captureReg(regNum, townId) {
     try {
       let regCount = await db.oneOrNone(
@@ -21,20 +21,17 @@ export default function RegistrationData(db) {
 
   async function allRegistrations() {
     let results;
-    let regList;
+
     try {
-      if (townId === 0) {
+      if (id === 5) {
         results = await db.manyOrNone("select regnumber from registrations");
-        regList = results;
       } else {
         results = await db.manyOrNone(
-          "select regnumber from registrations where town_id = $1",
-          [townId]
+          "select regnumber from registrations where town_id =$1",
+          [id]
         );
-        regList = results;
       }
-
-      return regList.reverse();
+      return results.reverse();
     } catch (err) {
       console.log(err);
     }
@@ -52,38 +49,22 @@ export default function RegistrationData(db) {
     }
   }
 
+  async function getTownId(town) {
+    let townId = await db.oneOrNone("select id from towns where townname =$1", [
+      town,
+    ]);
+    id = townId.id;
+    return townId.id;
+  }
   async function filterReg(town) {
-    let result;
     try {
-      if (town === "all") {
-        townId = 0;
-        result = await db.manyOrNone("select regnumber from registrations");
-      } else if (town === "bellville") {
-        townId = 1;
-        result = await db.manyOrNone(
-          "select regnumber from registrations where town_id = $1",
-          [townId]
-        );
-      } else if (town === "capeTown") {
-        townId = 2;
-        result = await db.manyOrNone(
-          "select regnumber from registrations where town_id = $1",
-          [townId]
-        );
-      } else if (town === "kuilsRiver") {
-        townId = 3;
-        result = await db.manyOrNone(
-          "select regnumber from registrations where town_id = $1",
-          [townId]
-        );
-      } else if (town === "paarl") {
-        townId = 4;
-        result = await db.manyOrNone(
-          "select regnumber from registrations where town_id = $1",
-          [townId]
-        );
-      }
-      return result;
+      let townId = await getTownId(town);
+
+      let results = await db.manyOrNone(
+        "select regnumber from registrations where town_id=$1",
+        [townId]
+      );
+      return results;
     } catch (err) {
       console.log(err);
     }
@@ -103,7 +84,11 @@ export default function RegistrationData(db) {
     );
     return Number(regCount.count);
   }
+  async function checkIfRows() {
+    let results = await db.one("select count(*) from registrations");
 
+    return Number(results.count);
+  }
   return {
     captureReg,
     allRegistrations,
@@ -111,5 +96,6 @@ export default function RegistrationData(db) {
     showThisReg,
     filterReg,
     checkAvailable,
+    checkIfRows,
   };
 }

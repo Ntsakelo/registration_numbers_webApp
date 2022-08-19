@@ -47,8 +47,10 @@ app.use(express.static("public"));
 const regNumbers = RegNumbers();
 const registrationData = RegistrationData(db);
 const regRoutes = Routes(regNumbers, registrationData);
-app.get("/", function (req, res) {
-  res.render("index");
+app.get("/", async function (req, res) {
+  await registrationData.filterReg("all");
+  let registrations = await registrationData.allRegistrations();
+  res.render("index", { registrations });
 });
 app.post("/reg_numbers", regRoutes.regNumberRoute);
 app.get("/clear", regRoutes.clearRoute);

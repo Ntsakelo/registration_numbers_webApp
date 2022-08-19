@@ -47,6 +47,10 @@ export default function () {
       return "The registration entered is invalid";
     } else if (isValid() === "valid") {
       return `Sucessfully entered a ${fromTown()} registration`;
+    } else if (isValid() === "cleared") {
+      return "Sucessfully cleared all registrations";
+    } else if (isValid() === "empty") {
+      return "storage is empty";
     }
   }
   function validState(string) {

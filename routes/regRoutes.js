@@ -2,7 +2,6 @@ export default function regRoutes(regNumbers, registrationData) {
   async function showReg(req, res, next) {
     try {
       let registrations = await registrationData.allRegistrations();
-
       res.render("index", {
         registrations,
         errorType: regNumbers.validateMessage().includes("Sucessfully")
@@ -61,8 +60,15 @@ export default function regRoutes(regNumbers, registrationData) {
 
   async function clearRoute(req, res, next) {
     try {
-      await registrationData.clearAll();
-      res.redirect("/");
+      let count = await registrationData.checkIfRows();
+      if (count > 0) {
+        regNumbers.validState("cleared");
+        await registrationData.clearAll();
+      } else if (count <= 0) {
+        regNumbers.validState("empty");
+      }
+      req.flash("info", regNumbers.validateMessage());
+      res.redirect("/reg_numbers");
     } catch (err) {
       next(err);
     }
