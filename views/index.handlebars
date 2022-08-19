@@ -1,0 +1,77 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/registration_numbers.css" />
+    <title>Registration numbers widgets</title>
+  </head>
+  <body>
+    <div class="main">
+      <h1 class="regHead">Registration numbers</h1>
+      <aside class="instructions removeInfo">
+        <div class="usageInfo infoOut">
+          <p>Enter registration numbers from the following towns:</p>
+          <ul class="townList">
+            <li>Cape Town(CA)</li>
+            <li>KuilsRiver(CF)</li>
+            <li>Paarl(CJ)</li>
+            <li>Bellville(CY)</li>
+            <li>Use either one of these formats e.g CF 218211/CA 222-222/CJ 555
+              555</li>
+          </ul>
+          <p>
+            Click "ADD" when you have entered the registration number in the
+            text area.You should be able to filter the registrations by a town
+            using the dropdown menu and choosing the town for which you want to
+            view the registration numbers.click filter after selecting the town.
+          </p>
+          <button class="closeInstructions">Got it</button>
+        </div>
+      </aside>
+
+      <div class="stateMsg {{errorType}}">
+        <p class="state">{{messages.info}}</p>
+      </div>
+      <button type="button" class="instrBtn instrBtn1">Instructions</button>
+      <div class="formDiv">
+        <form class="regForm" action="/reg_numbers" method="POST">
+          <input
+            name="registration"
+            class="reg regNum"
+            type="text"
+            placeholder="Registration Number"
+          />
+          <button class="add" type="submit">ADD</button>
+
+        </form>
+        <form action="/filter" method="POST" class="filterForm">
+          <div class="townOptions">
+            <label for="towns">Filter:</label>
+            <select name="towns" id="towns" class="towns">
+              <option value="all">All</option>
+              <option value="capeTown">Cape Town</option>
+              <option value="kuilsRiver">KuilsRiver</option>
+              <option value="paarl">Paarl</option>
+              <option value="bellville">Bellville</option>
+            </select>
+          </div>
+          <button type="submit" class="filter">Filter</button>
+
+        </form>
+      </div>
+      <div class="regNumDisplay">
+        {{#if registrations}}
+          {{#each registrations}}
+            <div class="regNumber">
+              <p class="regText">{{this.regnumber}}</p>
+            </div>
+          {{/each}}
+        {{else}}
+          <p class="noRegTxt">No registrations entered yet</p>
+        {{/if}}
+      </div>
+      <a class="clear" href="/clear"><button class="clearList">Clear All</button></a>
+    </div>
+  </body>
+</html>
