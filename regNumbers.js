@@ -48,9 +48,9 @@ export default function () {
     } else if (isValid() === "valid") {
       return `Sucessfully entered a ${fromTown()} registration`;
     } else if (isValid() === "cleared") {
-      return "Sucessfully cleared all registrations";
+      return "Sucessfully removed the registration(s)";
     } else if (isValid() === "empty") {
-      return "storage is empty";
+      return "there are no registrations available";
     }
   }
   function validState(string) {
