@@ -45,7 +45,7 @@ export default function regRoutes(regNumbers, registrationData) {
   async function currentRegRoute(req, res, next) {
     try {
       let regNum = req.params.regNum;
-      let result = await registrationData.showThisReg(regNum);
+      let result = await registrationData.showThisReg(regNum.toUpperCase());
       res.send(result);
     } catch (err) {
       next(err);
