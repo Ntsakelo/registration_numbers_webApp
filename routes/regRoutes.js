@@ -25,7 +25,10 @@ export default function regRoutes(regNumbers, registrationData) {
       if (regInput !== "" && selectedTown !== "") {
         selectedTown = "all";
       }
-      if (regNumbers.isValid() === "invalid") {
+      if (
+        regNumbers.isValid() === "invalid" ||
+        regNumbers.isValid() === "number"
+      ) {
         regInput = "";
       }
       let regStart = regInput.slice(0, 2);
