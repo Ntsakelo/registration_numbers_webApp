@@ -48,8 +48,7 @@ const regNumbers = RegNumbers();
 const registrationData = RegistrationData(db);
 const regRoutes = Routes(regNumbers, registrationData);
 app.get("/", async function (req, res) {
-  await registrationData.filterReg("all");
-  let registrations = await registrationData.allRegistrations();
+  let registrations = await registrationData.allRegistrations("all");
   res.render("index", { registrations });
 });
 app.post("/reg_numbers", regRoutes.regNumberRoute);

@@ -1,5 +1,4 @@
 export default function RegistrationData(db) {
-  let id = 0;
   async function captureReg(regNum, townId) {
     try {
       let regCount = await db.oneOrNone(
@@ -18,19 +17,22 @@ export default function RegistrationData(db) {
       console.log(err);
     }
   }
-
-  async function allRegistrations() {
-    let results;
-
+  async function setTownId(regStart) {
     try {
-      if (id === 5) {
-        results = await db.manyOrNone("select regnumber from registrations");
-      } else {
-        results = await db.manyOrNone(
-          "select regnumber from registrations where town_id =$1",
-          [id]
+      if (regStart) {
+        let townId = await db.oneOrNone(
+          "select id from towns where regstart =$1",
+          [regStart]
         );
+        return townId.id;
       }
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  async function allRegistrations(town) {
+    try {
+      let results = await filterReg(town);
       return results.reverse();
     } catch (err) {
       console.log(err);
@@ -53,17 +55,22 @@ export default function RegistrationData(db) {
     let townId = await db.oneOrNone("select id from towns where townname =$1", [
       town,
     ]);
-    id = townId.id;
     return townId.id;
   }
   async function filterReg(town) {
     try {
+      let results;
       let townId = await getTownId(town);
 
-      let results = await db.manyOrNone(
-        "select regnumber from registrations where town_id=$1",
-        [townId]
-      );
+      if (townId === 5) {
+        results = await db.manyOrNone("select regnumber from registrations");
+      } else {
+        results = await db.manyOrNone(
+          "select regnumber from registrations where town_id=$1",
+          [townId]
+        );
+      }
+
       return results;
     } catch (err) {
       console.log(err);
@@ -97,5 +104,7 @@ export default function RegistrationData(db) {
     filterReg,
     checkAvailable,
     checkIfRows,
+    setTownId,
+    getTownId,
   };
 }

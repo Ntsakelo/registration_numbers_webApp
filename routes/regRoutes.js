@@ -1,7 +1,11 @@
 export default function regRoutes(regNumbers, registrationData) {
+  let selectedTown = "";
   async function showReg(req, res, next) {
     try {
-      let registrations = await registrationData.allRegistrations();
+      if (selectedTown === "") {
+        selectedTown = "all";
+      }
+      let registrations = await registrationData.allRegistrations(selectedTown);
       res.render("index", {
         registrations,
         errorType: regNumbers.validateMessage().includes("Sucessfully")
@@ -16,31 +20,21 @@ export default function regRoutes(regNumbers, registrationData) {
   async function regNumberRoute(req, res, next) {
     try {
       let regInput = req.body.registration.toUpperCase();
-      let town = req.body.towns;
-      regNumbers.getRegNumber(regInput);
 
+      regNumbers.getRegNumber(regInput);
+      if (regInput !== "" && selectedTown !== "") {
+        selectedTown = "all";
+      }
       if (regNumbers.isValid() === "invalid") {
         regInput = "";
       }
-      function getTownId() {
-        let townId = 0;
-        if (regInput.startsWith("CY")) {
-          townId = 1;
-        } else if (regInput.startsWith("CA")) {
-          townId = 2;
-        } else if (regInput.startsWith("CF")) {
-          townId = 3;
-        } else if (regInput.startsWith("CJ")) {
-          townId = 4;
-        }
-        return townId;
-      }
+      let regStart = regInput.slice(0, 2);
+      let townId = await registrationData.setTownId(regStart);
       let regCount = await registrationData.checkAvailable(regInput);
       if (regCount > 0) {
         regNumbers.validState("");
       }
-      await registrationData.captureReg(regInput, getTownId);
-      await registrationData.filterReg(town);
+      await registrationData.captureReg(regInput, townId);
       req.flash("info", regNumbers.validateMessage());
       res.redirect("/reg_numbers");
     } catch (err) {
@@ -77,7 +71,7 @@ export default function regRoutes(regNumbers, registrationData) {
   async function filterRoute(req, res, next) {
     try {
       let town = req.body.towns;
-
+      selectedTown = town;
       await registrationData.filterReg(town);
       res.redirect("/reg_numbers");
     } catch (err) {
